@@ -43,7 +43,7 @@ public class Enemy : MonoBehaviour
         hit = Physics2D.Raycast(new Vector3(transform.position.x + movHor * frontCheck, transform.position.y, transform.position.z),
               new Vector3(movHor, 0, 0), frontDist);
 
-        if (hit == null)
+        if (hit != null)
             if (hit.transform != null)
                 if (hit.transform.CompareTag("Enemy"))
                     movHor = movHor * -1;
