@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
 
     public LayerMask groundLayer;
     public float frontGrndRayDist = 0.25f;
-    public float floorCheckY = 3.9f;
+    public float floorCheckY = 0.52f;
     public float frontCheck = 0.51f;
     public float frontDist = 0.001f;
 
@@ -35,22 +35,20 @@ public class Enemy : MonoBehaviour
         isGroundFloor = (Physics2D.Raycast(new Vector3(transform.position.x, transform.position.y - floorCheckY, transform.position.z),
                          new Vector3(movHor, 0, 0), frontGrndRayDist, groundLayer));
 
-        if (isGroundFloor)
+        if (!isGroundFloor)
             movHor = movHor * -1;
 
-        //Choque con pared
-        if (Physics2D.Raycast(transform.position, new Vector3(movHor, 0, 0), frontCheck, groundLayer))
-            movHor = movHor * -1;
 
         //Choque con otro enemigo
         hit = Physics2D.Raycast(new Vector3(transform.position.x + movHor * frontCheck, transform.position.y, transform.position.z),
               new Vector3(movHor, 0, 0), frontDist);
 
-        if (hit != false)
+        if (hit == null)
             if (hit.transform != null)
                 if (hit.transform.CompareTag("Enemy"))
                     movHor = movHor * -1;
-    }
+        
+     }
 
     void FixedUpdate()
     {
@@ -59,22 +57,11 @@ public class Enemy : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        //Dañar player
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            //Dañar player
-            Player.obj.getDamage();
-        }
+
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        //Destruir enemigo
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            //Destruir enemigo
-            getKilled();
-        }
 
     }
     void getKilled()

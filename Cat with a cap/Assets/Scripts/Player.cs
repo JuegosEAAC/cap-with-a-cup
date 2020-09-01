@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -14,7 +15,7 @@ public class Player : MonoBehaviour
     public float speed = 5f;
     public float jumpForce = 6f;
     public float movHor;
-
+    private float decelerate = 0.5f;
     public LayerMask groundLayer;
     public float radius = 0.63f;
     public float groundRayDist = 0.3f;
@@ -54,9 +55,12 @@ public class Player : MonoBehaviour
 
     public void jump()
     {
+        
         if (!isGrounded) return;
 
         rb.velocity = Vector2.up * jumpForce;
+        //rb.velocity = Vector2.down * decelerate;
+
     }
 
     public void getDamage()
