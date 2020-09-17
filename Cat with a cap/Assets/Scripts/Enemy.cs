@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +23,7 @@ public class Enemy : MonoBehaviour
 
     private RaycastHit2D hit;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,23 +34,25 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         //Evitar caer en precipicio
-        isGroundFloor = (Physics2D.Raycast(new Vector3(transform.position.x, transform.position.y - floorCheckY, transform.position.z),
+        isGroundFloor = (Physics2D.Raycast(new Vector3(transform.position.x, transform.position.y - floorCheckY, transform.position.z), 
                          new Vector3(movHor, 0, 0), frontGrndRayDist, groundLayer));
 
-        if (!isGroundFloor)
+        if (isGroundFloor)
             movHor = movHor * -1;
 
+        //Choque con pared
+        if (Physics2D.Raycast(transform.position, new Vector3(movHor, 0, 0), frontCheck, groundLayer))
+            movHor = movHor * -1;
 
         //Choque con otro enemigo
-        hit = Physics2D.Raycast(new Vector3(transform.position.x + movHor * frontCheck, transform.position.y, transform.position.z),
-              new Vector3(movHor, 0, 0), frontDist);
+        hit = Physics2D.Raycast(new Vector3(transform.position.x + movHor*frontCheck,transform.position.y,transform.position.z), 
+              new Vector3(movHor, 0, 0),frontDist);
 
-        if (hit != null)
+        if (hit != false)
             if (hit.transform != null)
                 if (hit.transform.CompareTag("Enemy"))
                     movHor = movHor * -1;
-        
-     }
+    }
 
     void FixedUpdate()
     {
@@ -57,15 +61,27 @@ public class Enemy : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-
+        //Dañar player
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            //Dañar player
+            Player.obj.getDamage();
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
+        //Destruir enemigo
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            //Destruir enemigo
+            getKilled();
+        }
 
     }
     void getKilled()
     {
+        FXManager.obj.showPop(transform.position);
         gameObject.SetActive(false);
     }
 }
